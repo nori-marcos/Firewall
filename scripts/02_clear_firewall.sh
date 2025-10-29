@@ -1,20 +1,19 @@
 #!/bin/bash
-# Limpa TODAS as regras de filtro e reseta as políticas
+# Limpa as regras da tabela FILTER e reseta a política FORWARD.
+# Propositalmente NÃO mexe na tabela 'nat'.
 
-echo "Limpando regras do firewall e reabrindo tudo..."
+echo "Limpando regras da tabela 'filter'..."
 
-# Limpa todas as regras
-iptables -F       # Limpa a chain FORWARD, INPUT, OUTPUT
-iptables -X       # Apaga chains personalizadas
-
-# Limpa a tabela NAT (importante para remover a regra do enable_routing.sh)
-iptables -t nat -F
-iptables -t nat -X
+# Limpa todas as regras da tabela 'filter'
+iptables -t filter -F FORWARD
+iptables -t filter -F INPUT
+iptables -t filter -F OUTPUT
+iptables -t filter -X
 
 # Reseta as políticas padrão para ACCEPT (permite tudo)
-# Isso abre seu firewall completamente.
+# Especialmente importante para a chain FORWARD, que estava como DROP
 iptables -P INPUT ACCEPT
 iptables -P FORWARD ACCEPT
 iptables -P OUTPUT ACCEPT
 
-echo "Firewall limpo. Todo o tráfego está permitido."
+echo "[✓] Firewall (filter) limpo. Todo o tráfego está sendo encaminhado."

@@ -1,17 +1,25 @@
 #!/bin/bash
-# Habilita o encaminhamento de pacotes no kernel (transforma o Linux em um roteador)
+# Habilita roteamento e NAT de forma persistente.
 
-echo "Habilitando encaminhamento de IP..."
+# Interface de saída para a internet, conectada ao provedor
+WAN_IF="${WAN_IF:-eth0}"
+# Interface de rede interna, utilizada pelos clientes para se conectar ao roteador
+LAN_IF="${LAN_IF:-eth1}"
+# Endereço IP da rede interna (LAN)
+LAN_IP="${LAN_IP:-192.168.50.1/24}"
 
-# A 'flag' 1 ativa o encaminhamento
-echo 1 > /proc/sys/net/ipv4/ip_forward
+echo "[+] Ativando roteamento IPv4..."
+sysctl -w net.ipv4.ip_forward=1
+sed -i 's/^#\?net.ipv4.ip_forward.*/net.ipv4.ip_forward=1/' /etc/sysctl.conf
 
-# Esta regra de 'nat' é crucial. Ela "traduz" os IPs privados da sua
-# rede interna (ex: 192.168.1.10) para o IP público do seu roteador,
-# permitindo que eles acessem a internet.
-# (Ajuste 'eth0' para ser sua interface de SAÍDA/Internet)
+echo "[+] Configurando IP da LAN..."
+ip addr add $LAN_IP dev $LAN_IF
+ip link set $LAN_IF up
 
-echo "Configurando NAT (Masquerade) na interface de saída..."
-iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+echo "[+] Limpando regras antigas..."
+iptables -t nat -F
 
-echo "Roteamento habilitado."
+echo "[+] Ativando NAT (masquerade) na interface $WAN_IF..."
+iptables -t nat -A POSTROUTING -o $WAN_IF -j MASQUERADE
+
+echo "[✓] Roteamento e NAT configurados."
