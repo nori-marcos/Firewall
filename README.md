@@ -82,47 +82,51 @@ de entrada (INPUT), encaminhamento (FORWARD) e saída (OUTPUT) são configuradas
 todo o tráfego por padrão. Em seguida, regras específicas são adicionadas para permitir o tráfego necessário e bloquear
 conexões indesejadas:
 
-- **INPUT**: Permite o tráfego de loopback, conexões estabelecidas e acesso ao servidor web na porta 8000. No entanto, o
-  tráfego ICMP (ping) é permitido apenas para a rede interna.
-    ```bash
-    echo "[+] INPUT: Permitir tráfego de loopback"
-    iptables -A INPUT -i lo -j ACCEPT
-    
-    echo "[+] INPUT: Permitir conexões estabelecidas"
-    iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-    
-    echo "[+] INPUT: Permitir acesso ao servidor web (porta 8000)"
-    iptables -A INPUT -s $REDE_INTERNA -p tcp --dport 8000 -m state --state NEW -j ACCEPT
-    
-    echo "[+] INPUT: Permitir Ping (ICMP) da rede interna"
-    iptables -A INPUT -s $REDE_INTERNA -p icmp --icmp-type echo-request -j ACCEPT
-    ```
-- **FORWARD**: Permite conexões estabelecidas, bloqueia DNS para redes sociais específicas (Facebook e TikTok)
-  utilizando correspondência de strings, permite DNS de saída (UDP e TCP), permite HTTP e HTTPS de saída, e gerencia o
-  tráfego ICMP (ping) de forma controlada.
-    ```bash
-    echo "[+] FORWARD: Permitir conexões estabelecidas"
-    iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-    
-    echo "[+] FORWARD: Bloqueando DNS para redes sociais (String Match)"
-    iptables -A FORWARD -s $REDE_INTERNA -p udp --dport 53 -m string --string "facebook" --algo bm -j REJECT
-    iptables -A FORWARD -s $REDE_INTERNA -p udp --dport 53 -m string --string "tiktok" --algo bm -j REJECT
-    
-    echo "[+] FORWARD: Permitir DNS (UDP e TCP) de saída (Geral)"
-    iptables -A FORWARD -s $REDE_INTERNA -p udp --dport 53 -m state --state NEW -j ACCEPT
-    iptables -A FORWARD -s $REDE_INTERNA -p tcp --dport 53 -m state --state NEW -j ACCEPT
-    
-    echo "[+] FORWARD: Permitir HTTP e HTTPS de saída"
-    iptables -A FORWARD -s $REDE_INTERNA -p tcp --dport 80 -m state --state NEW -j ACCEPT
-    iptables -A FORWARD -s $REDE_INTERNA -p tcp --dport 443 -m state --state NEW -j ACCEPT
-    
-    echo "[+] FORWARD: ICMP (Ping) gerenciado"
-    iptables -A FORWARD -s $REDE_INTERNA -d $SERVIDOR_INTERNO -p icmp --icmp-type echo-request -j ACCEPT
-    iptables -A FORWARD -s $REDE_INTERNA -p icmp --icmp-type echo-request -j REJECT --reject-with icmp-host-prohibited
-    ```
-- **OUTPUT**: Aceita todo o tráfego de saída sem restrições. Essa escolha visa garantir que o firewall não interfira nas
-  conexões iniciadas pela própria máquina roteadora/firewall, permitindo que ela se comunique livremente com outros
-  dispositivos na rede ou na Internet.
+**INPUT**: Permite o tráfego de loopback, conexões estabelecidas e acesso ao servidor web na porta 8000. No entanto, o
+tráfego ICMP (ping) é permitido apenas para a rede interna.
+
+```bash
+echo "[+] INPUT: Permitir tráfego de loopback"
+iptables -A INPUT -i lo -j ACCEPT
+
+echo "[+] INPUT: Permitir conexões estabelecidas"
+iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+echo "[+] INPUT: Permitir acesso ao servidor web (porta 8000)"
+iptables -A INPUT -s $REDE_INTERNA -p tcp --dport 8000 -m state --state NEW -j ACCEPT
+
+echo "[+] INPUT: Permitir Ping (ICMP) da rede interna"
+iptables -A INPUT -s $REDE_INTERNA -p icmp --icmp-type echo-request -j ACCEPT
+```
+
+**FORWARD**: Permite conexões estabelecidas, bloqueia DNS para redes sociais específicas (Facebook e TikTok)
+utilizando correspondência de strings, permite DNS de saída (UDP e TCP), permite HTTP e HTTPS de saída, e gerencia o
+tráfego ICMP (ping) de forma controlada.
+
+```bash
+echo "[+] FORWARD: Permitir conexões estabelecidas"
+iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+echo "[+] FORWARD: Bloqueando DNS para redes sociais (String Match)"
+iptables -A FORWARD -s $REDE_INTERNA -p udp --dport 53 -m string --string "facebook" --algo bm -j REJECT
+iptables -A FORWARD -s $REDE_INTERNA -p udp --dport 53 -m string --string "tiktok" --algo bm -j REJECT
+
+echo "[+] FORWARD: Permitir DNS (UDP e TCP) de saída (Geral)"
+iptables -A FORWARD -s $REDE_INTERNA -p udp --dport 53 -m state --state NEW -j ACCEPT
+iptables -A FORWARD -s $REDE_INTERNA -p tcp --dport 53 -m state --state NEW -j ACCEPT
+
+echo "[+] FORWARD: Permitir HTTP e HTTPS de saída"
+iptables -A FORWARD -s $REDE_INTERNA -p tcp --dport 80 -m state --state NEW -j ACCEPT
+iptables -A FORWARD -s $REDE_INTERNA -p tcp --dport 443 -m state --state NEW -j ACCEPT
+
+echo "[+] FORWARD: ICMP (Ping) gerenciado"
+iptables -A FORWARD -s $REDE_INTERNA -d $SERVIDOR_INTERNO -p icmp --icmp-type echo-request -j ACCEPT
+iptables -A FORWARD -s $REDE_INTERNA -p icmp --icmp-type echo-request -j REJECT --reject-with icmp-host-prohibited
+```
+
+**OUTPUT**: Aceita todo o tráfego de saída sem restrições. Essa escolha visa garantir que o firewall não interfira nas
+conexões iniciadas pela própria máquina roteadora/firewall, permitindo que ela se comunique livremente com outros
+dispositivos na rede ou na Internet.
 
 # Análise de Resultados e Desafios Enfrentados
 

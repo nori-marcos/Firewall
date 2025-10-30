@@ -1,35 +1,30 @@
-% code-style.tex — elegante para IEEE com recuo
+% code-style.tex — elegante para IEEE
 \usepackage{listings}
 \usepackage{xcolor}
 
-% ... (definições de cores) ...
+% paleta sóbria
+\definecolor{codebg}{RGB}{250,250,250}
+\definecolor{codeframe}{RGB}{220,220,220}
+\definecolor{codenum}{RGB}{160,160,160}
+\definecolor{codekw}{RGB}{0,0,128}      % azul escuro
+\definecolor{codestring}{RGB}{0,128,0}  % verde
+\definecolor{codecomment}{RGB}{120,120,120}
 
 \lstdefinestyle{ieeedefault}{
-    backgroundcolor=\color{codebg},
-    basicstyle=\ttfamily\footnotesize,
-    frame=single,
-    rulecolor=\color{codeframe},
-    frameround=tttt,
-    breaklines=true,
-    tabsize=2,
-    showstringspaces=false,
-
-    xleftmargin=1.5em,
-    xrightmargin=1.5em,
-    aboveskip=1ex,
-    belowskip=1ex,
-
-    % --- TENTE ESTA ALTERNATIVA ---
-    emptylines=*1,          % <--- Alternativa robusta para linhas em branco
-    breakatwhitespace=true, % <--- Melhora a quebra de linha
-    % -----------------------------
-
-    numbers=left,
-    numberstyle=\tiny\color{codenum},
-    numbersep=6pt,
-    keywordstyle=\bfseries\color{codekw},
-    commentstyle=\itshape\color{codecomment},
-    stringstyle=\color{codestring}
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\footnotesize,
+  frame=single,
+  rulecolor=\color{codeframe},
+  frameround=tttt, % cantos arredondados
+  breaklines=true,
+  tabsize=2,
+  showstringspaces=false,
+  numbers=left,
+  numberstyle=\tiny\color{codenum},
+  numbersep=6pt,
+  keywordstyle=\bfseries\color{codekw},
+  commentstyle=\itshape\color{codecomment},
+  stringstyle=\color{codestring}
 }
 
 \lstset{style=ieeedefault}
