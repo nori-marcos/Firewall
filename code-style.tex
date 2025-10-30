@@ -1,0 +1,35 @@
+% code-style.tex — elegante para IEEE com recuo
+\usepackage{listings}
+\usepackage{xcolor}
+
+% ... (definições de cores) ...
+
+\lstdefinestyle{ieeedefault}{
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\footnotesize,
+    frame=single,
+    rulecolor=\color{codeframe},
+    frameround=tttt,
+    breaklines=true,
+    tabsize=2,
+    showstringspaces=false,
+
+    xleftmargin=1.5em,
+    xrightmargin=1.5em,
+    aboveskip=1ex,
+    belowskip=1ex,
+
+    % --- TENTE ESTA ALTERNATIVA ---
+    emptylines=*1,          % <--- Alternativa robusta para linhas em branco
+    breakatwhitespace=true, % <--- Melhora a quebra de linha
+    % -----------------------------
+
+    numbers=left,
+    numberstyle=\tiny\color{codenum},
+    numbersep=6pt,
+    keywordstyle=\bfseries\color{codekw},
+    commentstyle=\itshape\color{codecomment},
+    stringstyle=\color{codestring}
+}
+
+\lstset{style=ieeedefault}
