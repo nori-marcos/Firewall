@@ -27,7 +27,7 @@ BASE_ARGS = [
     "--number-sections",
     "--wrap=preserve",
     "--pdf-engine", "xelatex",
-    "--listings",
+    "--syntax-highlighting=idiomatic",
     "--citeproc",
     "-V", "documentclass=IEEEtran",
     "-V", "classoption=conference",
